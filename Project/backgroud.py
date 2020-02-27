@@ -58,14 +58,25 @@ def get_info():
 #get_info(1582757640)
 
     # analysis the time
-
-d1 = datetime.datetime.strptime('2012-03-05 17:41:20', '%Y-%m-%d %H:%M:%S')
-d2 = datetime.datetime.strptime('2012-03-02 17:40:10', '%Y-%m-%d %H:%M:%S')
-
-delta = d2 - d1
-print(delta.seconds)
-
-
-
 while True:
-    if 
+    start_t = '09:30'
+    end_t = '16:00'
+    c_start_t = datetime.datetime.strptime(start_t, '%H:%M')
+    c_end_t = datetime.datetime.strptime(end_t, '%H:%M')
+    now_t = datetime.datetime.now().strftime('%H:%M')
+    c_now_t = datetime.datetime.strptime(now_t, '%H:%M')
+    print(now_t)
+    if c_now_t >= c_start_t and c_now_t <= c_end_t:
+        print('start')
+        get_info()
+        time.sleep(61)
+    elif c_now_t < c_start_t:
+        print('early')
+        time.sleep((c_start_t-c_now_t).seconds)
+    else:
+        print('late')
+        last_t = datetime.datetime.strptime('23:59', '%H:%M')
+        initial_t = datetime.datetime.strptime('0:0', '%H:%M')
+        time.sleep((last_t-c_now_t).seconds+(start_t-initial_t).seconds)
+
+
