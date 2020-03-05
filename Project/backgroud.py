@@ -58,7 +58,7 @@ def get_info():
 #get_info(1582757640)
 
     # analysis the time
-while False:
+while True:
     start_t = '09:30'
     end_t = '16:00'
     c_start_t = datetime.datetime.strptime(start_t, '%H:%M')
