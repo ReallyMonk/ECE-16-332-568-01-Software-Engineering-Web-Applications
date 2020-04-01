@@ -1,0 +1,5 @@
+<titles>
+    for $tit in doc("file.xml")/broadway/title
+    return
+    {$title}
+</titles>

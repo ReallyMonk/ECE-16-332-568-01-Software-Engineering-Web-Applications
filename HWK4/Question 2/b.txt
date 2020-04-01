@@ -1,0 +1,6 @@
+<addrs>
+    for $addr in doc("file.xml")/broadway/theater
+    where $addr/date = "11/9/2008" and $addr/price < 35
+        {$addr/title}
+        {$addr/address}
+</addrs>

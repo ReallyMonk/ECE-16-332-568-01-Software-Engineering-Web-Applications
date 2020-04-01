@@ -1,0 +1,5 @@
+by setting data_path can identify the dataset you are going to use
+for training.
+
+By calling predict() from BCF instance we can get the prediction from 
+the training model.

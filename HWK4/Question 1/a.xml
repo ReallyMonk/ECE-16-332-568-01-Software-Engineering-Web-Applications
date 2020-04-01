@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<!DOCTYPE products SYSTEM "a.dtd">
+
+<products>
+    <product pid="p123">
+        <Name>gizmo</Name>
+        <Price>22.99</Price>
+        <Description>great</Description>
+        <stores>
+            <store sid="s323">
+                <Name>Wiz</Name>
+                <Phones>555-1234</Phones>
+                <Markup>25%</Markup>
+            </store>
+            <store sid="s323">
+                <Name>Wiz</Name>
+                <Phones>555-1234</Phones>
+                <Markup>15%</Markup>
+            </store>
+        </stores>
+    </product>
+    <product pid="p231">
+        <Name>gizmoPlus</Name>
+        <Price>99.99</Price>
+        <Description>more features</Description>
+        <stores>
+            <store sid="s323">
+                <Name>Wiz</Name>
+                <Phones>555-1234</Phones>
+                <Markup>10%</Markup>
+            </store>
+        </stores>
+    </product>
+    <product pid="p312">
+        <Name>gadget</Name>
+        <Price>59.99</Price>
+        <Description>good value</Description>
+    </product>
+</products>

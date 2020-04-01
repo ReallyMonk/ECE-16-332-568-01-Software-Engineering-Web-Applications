@@ -2,19 +2,21 @@ import numpy as np
 import json
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import BayesianRidge
 
 data_path = 'D:\Rutgers\\2nd Semester\SOFTWR ENGG WEB APPL\Homework\Project\data\year_data\\NVDA.json'
 origin_data = json.load(open(data_path))
 
-#x_train = np.array(origin_data["time"][0:10]).reshape(-1, 1)
-y_train = np.array(origin_data["low"][0:100])
-x_train = np.array(range(1, len(y_train)+1)).reshape(-1, 1)
-#x_test = np.array(origin_data["time"][0:10]).reshape(-1, 1)
-y_test = np.array(origin_data["low"][0:100])
-x_test = np.array(range(1, len(y_test)+1)).reshape(-1, 1)
+#x_train = np.array(origin_data["time"][0:100]).reshape(-1, 1)
+y_train = np.array(origin_data["low"][0:150])
+x_train = np.array(range(1, len(y_train) + 1)).reshape(-1, 1)
+#x_test = np.array(origin_data["time"][100:200]).reshape(-1, 1)
+y_test = np.array(origin_data["low"][0:151])
+x_test = np.array(range(1, len(y_test) + 1)).reshape(-1, 1)
 
-print(x_train)
-print(y_train)
+print('x_train', x_train)
+print('y_train', y_train)
+print('y_test', y_test)
 '''
 # for this case we create a sin(x) as the
 def uniform(size):
@@ -43,13 +45,12 @@ y_test = sin_fun(x_test)
 class Bayes_curve_fitting:
     def __init__(self, a, b, X, Y, M):
         self.a = a
-        self.b = b
+        self.b = np.var(Y)
         self.model = PolynomialFeatures(M)
         self.t_X = self.model.fit_transform(X)
         self.t_Y = Y
 
     def matrixS(self):
-        print(len(self.t_X[0]))
         S_inv = self.a * np.identity(len(self.t_X[0])) + self.b * np.matmul(
             self.t_X.T, self.t_X)
         return np.linalg.inv(S_inv)
@@ -59,7 +60,9 @@ class Bayes_curve_fitting:
         X = self.model.fit_transform(X)
         mean = self.b * np.matmul(
             X, np.matmul(S, np.matmul(self.t_X.T, self.t_Y)))
-        return mean
+        w = self.b * np.matmul(S, np.matmul(self.t_X.T, self.t_Y))
+        print('w', w)
+        return mean, w
 
     def variance(self, X):
         S = self.matrixS()
@@ -70,19 +73,26 @@ class Bayes_curve_fitting:
             var.append(np.sqrt(variance))
         return var
 
+    def predict(self, X):
+        mean, w = self.mean(X)
+        Xn = self.model.fit_transform(X)
+        return np.matmul(Xn, w)
+    
+
 
 BCF = Bayes_curve_fitting(2e-3, 10, x_train, y_train, 9)
 
-#y_train = y_train.reshape(100)
-Mean = BCF.mean(x_test)
+#y_train = y_train.reshape(150)
+Mean = BCF.predict(x_test)
 Std = BCF.variance(x_test)
 
-print(Std)
-print(Mean.T[0])
+print('Mean', Mean)
+print('Mean', Mean.T[-1])
+print('y_test', y_test[-1])
 
 fig = plt.figure(figsize=(12, 8))
-plt.scatter(x_train,
-            y_train,
+plt.scatter(x_test,
+            y_test,
             facecolor="none",
             edgecolor="b",
             s=50,
@@ -90,12 +100,13 @@ plt.scatter(x_train,
 plt.plot(x_test, y_test, c="g", label="$\sin(2\pi x)$")
 plt.plot(x_test, Mean, c="r", label="Mean")
 
-plt.fill_between(x_test.T[0],
+plt.fill_between(x_train.T[0],
                  Mean.T - Std,
                  Mean.T + Std,
                  color="pink",
                  label="std.",
                  alpha=0.5)
+                
 
 plt.title("M=9")
 plt.legend(loc=2)

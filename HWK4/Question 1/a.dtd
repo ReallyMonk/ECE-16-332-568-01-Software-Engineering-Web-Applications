@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<!ELEMENT products (product+)>
+<!ELEMENT product (Name, Price, Description, stores+)>
+<!ELEMENT Name        (#PCDATA)>
+<!ELEMENT Price       (#PCDATA)>
+<!ELEMENT Description (#PCDATA)>
+<!ELEMENT stores (store)>
+<!ELEMENT store (Name, Phones, Markup)>
+<!ELEMENT Phones      (#PCDATA)>
+<!ELEMENT Markup      (#PCDATA)
+<!ALLLIST product pid CDATA #REQUIRED>
+<!ALLLIST store sid CDATA #REQUIRED>

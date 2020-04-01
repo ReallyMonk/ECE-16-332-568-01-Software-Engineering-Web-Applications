@@ -1,0 +1,15 @@
+<groupedByDate>
+    for $day in doc("file.xml)/date 
+        for $show in $day/opera
+        where $show/date = $day
+        return
+        <day>
+            {$day}
+            <show>
+                {$show/title}
+                for $p in $show
+                return
+                    {$p/price}
+            </show>
+        </day>
+</groupedByDate>

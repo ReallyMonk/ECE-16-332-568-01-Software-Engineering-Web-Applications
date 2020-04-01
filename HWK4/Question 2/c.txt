@@ -1,0 +1,6 @@
+<titles>
+    for $tit in doc("file.xml")/broadway/concert
+    where $tit/tpye = "chamber orchestra" and avg(data($tit/price))
+    return
+        {$tit/title}
+</titles>
