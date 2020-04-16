@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>HWK5 Q2</title>
+        <script type="text/javascript" src="Q2.js"></script>
+    </head>
+
+    <body>
+        <h1>This web site will find the volume fot a Cylinder, Sphere or Cone</h1>
+
+        <form id="info">
+            Sleect the units (English or SI)
+            <input type="radio" name="unit" id="en" value="EN" checked>English
+            <input type="radio" name="unit" id="si" value="SI">SI
+
+            <br/><br/>
+
+            Select the shape
+            <select name="shape">
+                <option value="Cone">Cone</option>
+                <option value="Cylinder">Cylinder</option>
+                <option value="Sphere">Sphere</option>
+            </select>
+
+            <br/><br/>
+
+            Enter the radius 
+            <input type="text" name="radius">
+
+            <br/><br/>
+
+            For the Cylinder and, Enter the height 
+            <input type="text" name="height">
+
+            <br/><br/>
+
+            <input type="button" name="reste_button" onclick="reset_Form()" value="reset the form">
+        </form>
+
+        <h1>Results</h1>
+        <p id="units_choice">You select to use English units</p>
+        <p id="shape_choice">You select to find the values for a Cone shape</p>
+
+        <table border="1">
+            <tr>
+                <th>Shape</th>
+                <th>Radius</th>
+                <th>Height</th>
+                <th>Volume</th>
+            </tr>
+            <tr>
+                <th> </th>
+                <th id="units_r"> </th>
+                <th id="units_h"> </th>
+                <th id="units_v"> </th>
+            </tr>
+            <tr>
+                <td id="res_shape"></td>
+                <td id="res_r"></td>
+                <td id="res_h"></td>
+                <td id="res_v"></td>
+            </tr>
+        </table>
+        
+        <br/>
+        <input type="button" value="Calculate the result">
+
+    </body>
+</html>
