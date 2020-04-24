@@ -11,13 +11,13 @@
 
         <form id="info">
             Sleect the units (English or SI)
-            <input type="radio" name="unit" id="en" value="EN" checked>English
-            <input type="radio" name="unit" id="si" value="SI">SI
+            <input type="radio" name="units" value="English" checked>English
+            <input type="radio" name="units" value="SI">SI
 
             <br/><br/>
 
             Select the shape
-            <select name="shape">
+            <select name="shape" id="shape">
                 <option value="Cone">Cone</option>
                 <option value="Cylinder">Cylinder</option>
                 <option value="Sphere">Sphere</option>
@@ -26,12 +26,12 @@
             <br/><br/>
 
             Enter the radius 
-            <input type="text" name="radius">
+            <input type="text" name="radius" id="radius">
 
             <br/><br/>
 
             For the Cylinder and, Enter the height 
-            <input type="text" name="height">
+            <input type="text" name="height" id="height">
 
             <br/><br/>
 
@@ -49,13 +49,13 @@
                 <th>Height</th>
                 <th>Volume</th>
             </tr>
-            <tr>
+            <tr height="18">
                 <th> </th>
                 <th id="units_r"> </th>
                 <th id="units_h"> </th>
                 <th id="units_v"> </th>
             </tr>
-            <tr>
+            <tr height="18">
                 <td id="res_shape"></td>
                 <td id="res_r"></td>
                 <td id="res_h"></td>
@@ -64,7 +64,7 @@
         </table>
         
         <br/>
-        <input type="button" value="Calculate the result">
-
+        <input type="button" value="Calculate the result" onclick="calculate()">
+ 
     </body>
 </html>
