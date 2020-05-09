@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StockPrediction</title>
+    <style>
+         
+h1 {       
+  color:#000;
+  font-weight:900;
+  font-size: -webkit-xxx-large;
+  margin-top:20px;   
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:4px;
+}
+h2{
+	/* search*/
+	text-align: right;
+	font-size: 100%;
+}
+.stock-wrapper {
+  margin:auto;
+  max-width:1080px;
+}
+#stock-bar-container {
+  position:relative;
+  width:50%;
+  margin:auto;
+  height:100px;
+  margin-top:8px;
+}
+#stock-bar-container ul {
+  padding:0;
+  margin:0;
+  padding-top:15px;
+  z-index:9999;
+  position:absolute;
+  width:100%;
+  margin-top:-40px
+}
+#stock-bar-container li:before {
+  content:" ";
+  display:block;
+  margin:auto;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  border:solid 2px #aaa;
+  transition:all ease 0.3s;
+     
+}
+#stock-bar-container li.active:before, #stock-bar-container li:hover:before {
+  border:solid 2px #fff;
+          
+  background: linear-gradient(to right, #E91E63 0%,#fff 100%); 
+}
+#stock-bar-container li {
+  list-style:none;
+  float:left;
+  width:33%;
+  text-align:center;
+  color:#3d3d3d;
+  text-transform:uppercase;
+  font-size:11px;
+  cursor:pointer;
+  font-weight:700;
+  transition:all ease 0.2s;
+  vertical-align:bottom;
+  height:60px;
+  position:relative;
+}
+#stock-bar-container li .step-inner {
+  position:absolute;
+  width:100%;
+  bottom:0;
+    font-size: 14px;
+}
+#stock-bar-container li.active, #stock-bar-container li:hover {
+  color:#333;
+}
+#stock-bar-container li:after {
+  content:" ";
+  display:block;
+  width:6px;
+  height:6px;
+  background:#777;
+  margin:auto;
+  border:solid 7px #fff;
+  border-radius:50%;
+  margin-top:40px;
+  box-shadow:0 2px 13px -1px rgba(0,0,0,0.3);
+  transition:all ease 0.2s;
+     
+}
+#stock-bar-container li:hover:after {
+  background:#444;
+}
+#stock-bar-container li.active:after {
+  background:#207893;
+}
+#stock-bar-container #line {
+  width:69%;
+  margin:auto;
+  background: #eee;
+  height:6px;
+  position:absolute;
+  left:15%;
+  top:57px;
+  z-index:1;
+  border-radius:50px;
+  transition:all ease 0.9s;
+}
+#stock-bar-container #line-progress {
+  content:" ";
+  width:3%;
+  height:100%;
+  background: #207893;   
+  background: linear-gradient(to right, #207893 0%,#2ea3b7 100%); 
+  position:absolute;
+  z-index:2;
+  border-radius:50px;
+  transition:all ease 0.9s;
+}
+#progress-content-section {
+  width:90%;
+  margin: auto;
+  background: #f3f3f3;
+  border-radius: 4px;
+}
+#progress-content-section .section-content {
+  padding:30px 40px;
+  text-align:center;
+}
+#progress-content-section .section-content h3 {
+  font-size:17px;
+  text-transform:uppercase;
+  color:#333;
+  letter-spacing:1px;
+}
+#progress-content-section .section-content p {
+  font-size:16px;
+  line-height:1.8em;
+  color:#777;
+}
+#progress-content-section .section-content {
+  display:none;
+  animation: FadeInUp 700ms ease 1;
+  animation-fill-mode:forwards;
+  transform:translateY(15px);
+  opacity:0;
+}
+#progress-content-section .section-content.active {
+  display:block;
+}
+@keyframes FadeInUp {
+  0% {
+    transform:translateY(15px);
+    opacity:0;
+  }
+  
+  100% {
+    transform:translateY(0px);
+    opacity:1;
+  }
+}
+ 
+    </style>
+</head>
+<body background="background.jpg";>
+<h2>
+  <form action="form_action.asp" method="get">
+  <input type="text" name="stock" />
+  <input type="image" src="search.png" value="submit" />
+  </form>
+  
+</h2>
+<h1>Stock Prediction</h1>
+<br> 
+<div class="stock-wrapper">
+<div id="stock-bar-container">
+  <ul>
+    <li class="step step01 active"><div class="step-inner">STOCK</div></li>
+    <li class="step step02"><div class="step-inner">HISTORY DATA</div></li>
+    <li class="step step03"><div class="step-inner">PREDICTION DATA</div></li>
+  </ul>
+  
+  <div id="line">
+    <div id="line-progress"></div>
+  </div>
+</div>
+<div id="progress-content-section">
+  <div class="section-content stock active">
+    <h3>enter the symbol</h3>
+    
+  </div>
+  
+  <div class="section-content history">
+    <h3>我是历史数据</h3>
+  </div>
+  
+  <div class="section-content prediction">
+    <h3>我是预测值</h3>
+  </div>
+  
+  
+  
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+ <script>
+    
+$(".step").click( function() {
+  $(this).addClass("active").prevAll().addClass("active");
+  $(this).nextAll().removeClass("active");
+});
+$(".step01").click( function() {
+  $("#line-progress").css("width", "3%");
+  $(".stock").addClass("active").siblings().removeClass("active");
+});
+$(".step02").click( function() {
+  $("#line-progress").css("width", "50%");
+  $(".history").addClass("active").siblings().removeClass("active");
+});
+$(".step03").click( function() {
+  $("#line-progress").css("width", "100%");
+  $(".prediction").addClass("active").siblings().removeClass("active");
+});
+
+ 
+    </script>
+</body>
+</html>

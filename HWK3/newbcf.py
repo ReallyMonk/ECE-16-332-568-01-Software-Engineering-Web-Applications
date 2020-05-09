@@ -4,16 +4,16 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import BayesianRidge
 
-data_path = 'D:\Rutgers\\2nd Semester\SOFTWR ENGG WEB APPL\Homework\Project\data\year_data\\NVDA.json'
+data_path = 'F:\Rutgers\\2ndSemester\SOFTWR ENGG WEB APPL\Homework\Project\data\year_data\\AMZN.json'
 origin_data = json.load(open(data_path))
 
 # get stock data
 #x_train = np.array(origin_data["time"][0:10]).reshape(-1, 1)
-y_train = np.array(origin_data["low"][0:100])
-x_train = np.array(range(1, len(y_train) + 1)).reshape(-1, 1)
+#y_train = np.array(origin_data["low"][0:100])
+#x_train = np.array(range(1, len(y_train) + 3)).reshape(-1, 1)
 #x_test = np.array(origin_data["time"][0:10]).reshape(-1, 1)
-y_test = np.array(origin_data["low"][0:101])
-x_test = np.array(range(1, len(y_test) + 1)).reshape(-1, 1)
+#y_test = np.array(origin_data["low"][0:110])
+#x_test = np.array(range(1, len(y_test) + 10)).reshape(-1, 1)
 
 #print(x_train)
 #print(y_train)
@@ -25,7 +25,7 @@ class bcf():
         self.t_X = trainX
         self.t_Y = trainY.reshape(len(trainY), 1)
         self.lambd = 0.02
-        self.M = None
+        self.M = 9
 
     def fit(self):
         self.model = PolynomialFeatures(self.M)
@@ -70,9 +70,9 @@ def experiment():
     real_T = []
     for i in range(101):
         y_train = np.array(origin_data["low"][0:100 + i])
-        x_train = np.array(range(1, len(y_train) + 1)).reshape(-1, 1)
-        y_test = np.array(origin_data["low"][0:i + 100 + 1])
-        x_test = np.array(range(1, len(y_test) + 1)).reshape(-1, 1)
+        x_train = np.array(range(100, len(y_train) + 100)).reshape(-1, 1)
+        y_test = np.array(origin_data["low"][0:i + 100 + 3])
+        x_test = np.array(range(1000, len(y_test) + 1000)).reshape(-1, 1)
 
         BCF = bcf(x_train, y_train)
         res = BCF.predict(x_test)
@@ -147,3 +147,5 @@ plt.plot(axis_x, y_pre, c="r", label="pre_y")
 plt.title("Test Result")
 plt.legend(loc=2)
 plt.show()
+
+print(y_pre)
