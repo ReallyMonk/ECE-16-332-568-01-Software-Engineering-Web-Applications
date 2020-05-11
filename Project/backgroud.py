@@ -1,8 +1,11 @@
+from flask import Flask
 import pymongo
 import time
 import json
 import requests
 import datetime
+
+app = Flask(__name__)
 
 
 def get_info():
@@ -14,7 +17,7 @@ def get_info():
     for name in companies:
         # download data
         # url = "https://query1.finance.yahoo.com/v8/finance/chart/" + name + "?symbol=" + name + "&period1=" + str(timestamp-80000) + "&period2=" + str(timestamp+1000) + "&interval=1m&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-US&region=US&crumb=RGKkY5jfStA&corsDomain=finance.yahoo.com"
-        url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+name+'?region=US&lang=en-US&includePrePost=false&interval=1m&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance'
+        url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + name + '?region=US&lang=en-US&includePrePost=false&interval=1m&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance'
 
         request = requests.get(url)
 
@@ -29,11 +32,26 @@ def get_info():
         data = json.loads(request.content)
         time = {'time': data['chart']['result'][0]['timestamp'][-1]}
         print(time)
-        _high = {'high': data['chart']['result'][0]['indicators']['quote'][0]['high'][-1]}
-        _low = {'low': data['chart']['result'][0]['indicators']['quote'][0]['low'][-1]}
-        _open = {'open': data['chart']['result'][0]['indicators']['quote'][0]['open'][-1]}
-        _close = {'close': data['chart']['result'][0]['indicators']['quote'][0]['close'][-1]}
-        _volume = {'volum': data['chart']['result'][0]['indicators']['quote'][0]['volume'][-1]}
+        _high = {
+            'high':
+            data['chart']['result'][0]['indicators']['quote'][0]['high'][-1]
+        }
+        _low = {
+            'low':
+            data['chart']['result'][0]['indicators']['quote'][0]['low'][-1]
+        }
+        _open = {
+            'open':
+            data['chart']['result'][0]['indicators']['quote'][0]['open'][-1]
+        }
+        _close = {
+            'close':
+            data['chart']['result'][0]['indicators']['quote'][0]['close'][-1]
+        }
+        _volume = {
+            'volum':
+            data['chart']['result'][0]['indicators']['quote'][0]['volume'][-1]
+        }
 
         # collection.insert_many(rest_info)
         #print(type(time))
@@ -55,35 +73,39 @@ def get_info():
         collection.insert_one(all_info)
 
 
-#get_info(1582757640)
-
+@app.route('/')
+def main():
     # analysis the time
-while True:
-    start_t = '09:30'
-    end_t = '16:00'
-    c_start_t = datetime.datetime.strptime(start_t, '%H:%M')
-    c_end_t = datetime.datetime.strptime(end_t, '%H:%M')
-    now_t = datetime.datetime.now().strftime('%H:%M')
-    c_now_t = datetime.datetime.strptime(now_t, '%H:%M')
+    while True:
+        start_t = '09:30'
+        end_t = '16:00'
+        c_start_t = datetime.datetime.strptime(start_t, '%H:%M')
+        c_end_t = datetime.datetime.strptime(end_t, '%H:%M')
+        now_t = datetime.datetime.now().strftime('%H:%M')
+        c_now_t = datetime.datetime.strptime(now_t, '%H:%M')
 
-    now_date = datetime.datetime.now().weekday()
-    print(now_t)
-    # is weekend
-    if now_date == 5 or now_date == 6:
-        last_t = datetime.datetime.strptime('23:59', '%H:%M')
-        initial_t = datetime.datetime.strptime('0:0', '%H:%M')
-        time.sleep((last_t-c_now_t).seconds+(c_start_t-initial_t).seconds)
-    else:
-        if c_now_t >= c_start_t and c_now_t <= c_end_t:
-            print('start')
-            get_info()
-            time.sleep(61)
-        elif c_now_t < c_start_t:
-            print('early')
-            time.sleep((c_start_t-c_now_t).seconds)
-        else:
-            print('late')
+        now_date = datetime.datetime.now().weekday()
+        print(now_t)
+        # is weekend
+        if now_date == 5 or now_date == 6:
             last_t = datetime.datetime.strptime('23:59', '%H:%M')
             initial_t = datetime.datetime.strptime('0:0', '%H:%M')
-            time.sleep((last_t-c_now_t).seconds+(c_start_t-initial_t).seconds)
+            time.sleep((last_t - c_now_t).seconds +
+                       (c_start_t - initial_t).seconds)
+        else:
+            if c_now_t >= c_start_t and c_now_t <= c_end_t:
+                print('start')
+                get_info()
+                time.sleep(61)
+            elif c_now_t < c_start_t:
+                print('early')
+                time.sleep((c_start_t - c_now_t).seconds)
+            else:
+                print('late')
+                last_t = datetime.datetime.strptime('23:59', '%H:%M')
+                initial_t = datetime.datetime.strptime('0:0', '%H:%M')
+                time.sleep((last_t - c_now_t).seconds +
+                           (c_start_t - initial_t).seconds)
 
+
+app.run(port=5000)

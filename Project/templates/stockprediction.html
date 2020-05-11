@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>StockPrediction</title>
+  <style>
+    h1 {
+      color: #000;
+      font-weight: 900;
+      font-size: -webkit-xxx-large;
+      margin-top: 20px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+    }
+
+    h2 {
+      /* search*/
+      text-align: right;
+      font-size: 100%;
+    }
+
+    #search-box {
+      vertical-align: middle;
+    }
+
+    .crosshair {
+      fill: none;
+      stroke-width: 1px;
+    }
+
+    .tooltip {
+      position: absolute;
+      text-align: center;
+      width: 60px;
+      height: 12px;
+      padding: 8px;
+      margin-top: -20px;
+      font: 10px sans-serif;
+      background: #ddd;
+      pointer-events: none;
+    }
+
+    .stock-wrapper {
+      margin: auto;
+      max-width: 1080px;
+    }
+
+    #stock-bar-container {
+      position: relative;
+      width: 50%;
+      margin: auto;
+      height: 100px;
+      margin-top: 8px;
+    }
+
+    #stock-bar-container ul {
+      padding: 0;
+      margin: 0;
+      padding-top: 15px;
+      z-index: 9999;
+      position: absolute;
+      width: 100%;
+      margin-top: -40px
+    }
+
+    #stock-bar-container li:before {
+      content: " ";
+      display: block;
+      margin: auto;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: solid 2px #aaa;
+      transition: all ease 0.3s;
+
+    }
+
+    #stock-bar-container li.active:before,
+    #stock-bar-container li:hover:before {
+      border: solid 2px #fff;
+
+      background: linear-gradient(to right, #E91E63 0%, #fff 100%);
+    }
+
+    #stock-bar-container li {
+      list-style: none;
+      float: left;
+      width: 33%;
+      text-align: center;
+      color: #3d3d3d;
+      text-transform: uppercase;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all ease 0.2s;
+      vertical-align: bottom;
+      height: 60px;
+      position: relative;
+    }
+
+    #stock-bar-container li .step-inner {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      font-size: 14px;
+    }
+
+    #stock-bar-container li.active,
+    #stock-bar-container li:hover {
+      color: #333;
+    }
+
+    #stock-bar-container li:after {
+      content: " ";
+      display: block;
+      width: 6px;
+      height: 6px;
+      background: #777;
+      margin: auto;
+      border: solid 7px #fff;
+      border-radius: 50%;
+      margin-top: 40px;
+      box-shadow: 0 2px 13px -1px rgba(0, 0, 0, 0.3);
+      transition: all ease 0.2s;
+
+    }
+
+    #stock-bar-container li:hover:after {
+      background: #444;
+    }
+
+    #stock-bar-container li.active:after {
+      background: #207893;
+    }
+
+    #stock-bar-container #line {
+      width: 69%;
+      margin: auto;
+      background: #eee;
+      height: 6px;
+      position: absolute;
+      left: 15%;
+      top: 57px;
+      z-index: 1;
+      border-radius: 50px;
+      transition: all ease 0.9s;
+    }
+
+    #stock-bar-container #line-progress {
+      content: " ";
+      width: 3%;
+      height: 100%;
+      background: #207893;
+      background: linear-gradient(to right, #207893 0%, #2ea3b7 100%);
+      position: absolute;
+      z-index: 2;
+      border-radius: 50px;
+      transition: all ease 0.9s;
+    }
+
+    #progress-content-section {
+      width: 90%;
+      margin: auto;
+      background: #f3f3f3;
+      border-radius: 4px;
+    }
+
+    #progress-content-section .section-content {
+      padding: 30px 40px;
+      text-align: center;
+    }
+
+    #progress-content-section .section-content a {
+      font-size: 17px;
+      text-transform: uppercase;
+      color: #333;
+      letter-spacing: 1px;
+    }
+
+    /*#progress-content-section .section-content p {
+  font-size:16px;
+  line-height:1.8em;
+  color:#777;
+}*/
+    #progress-content-section .section-content {
+      display: none;
+      animation: FadeInUp 700ms ease 1;
+      animation-fill-mode: forwards;
+      transform: translateY(15px);
+      opacity: 0;
+    }
+
+    #progress-content-section .section-content.active {
+      display: block;
+    }
+
+    @keyframes FadeInUp {
+      0% {
+        transform: translateY(15px);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0px);
+        opacity: 1;
+      }
+    }
+  </style>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<body background="static/background.jpg" ;>
+  <!-- <div class="tooltip" style="opacity:0"></div> -->
+
+  <h2>
+    <form action="form_action.asp" method="get">
+      <input type="text" name="stock" />
+      <input type="image" src="static/search.png" value="submit" />
+    </form>
+  </h2>
+
+  <h1>Stock Prediction</h1>
+  <br>
+  <div class="stock-wrapper">
+    <div id="stock-bar-container">
+      <ul>
+        <li class="step step01 active">
+          <div class="step-inner">STOCK</div>
+        </li>
+        <li class="step step02">
+          <div class="step-inner">HISTORY DATA</div>
+        </li>
+        <li class="step step03">
+          <div class="step-inner">PREDICTION DATA</div>
+        </li>
+      </ul>
+
+      <div id="line">
+        <div id="line-progress"></div>
+      </div>
+    </div>
+    <div id="progress-content-section">
+      <div class="section-content stock active">
+        <h3 class="stock-id" id="AAPL">AAPL</h3>
+        <h3 class="stock-id" id="AMZN">AMZN</h3>
+        <h3 class="stock-id" id="COKE">COKE</h3>
+        <h3 class="stock-id" id="GOOG">GOOG</h3>
+        <h3 class="stock-id" id="MCD">MCD</h3>
+        <h3 class="stock-id" id="MSFT">MSFT</h3>
+        <h3 class="stock-id" id="NVDA">NVDA</h3>
+        <h3 class="stock-id" id="SNE">SNE</h3>
+        <h3 class="stock-id" id="TSLA">TSLA</h3>
+        <h3 class="stock-id" id="YOJ.SG">YOJ.SG</h3>
+      </div>
+
+      <div class="section-content history" id="history">
+        <!-- <a name="historydata">我是历史数据</a> -->
+        <svg></svg>
+      </div>
+
+      <div class="section-content prediction">
+      </div>
+
+
+
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+  <script>
+    $(".step").click(function () {
+      $(this).addClass("active").prevAll().addClass("active");
+      $(this).nextAll().removeClass("active");
+    });
+    $(".step01").click(function () {
+      $("#line-progress").css("width", "3%");
+      $(".stock").addClass("active").siblings().removeClass("active");
+    });
+    $(".step02").click(function () {
+      $("#line-progress").css("width", "50%");
+      $(".history").addClass("active").siblings().removeClass("active");
+    });
+    $(".step03").click(function () {
+      $("#line-progress").css("width", "100%");
+      $(".prediction").addClass("active").siblings().removeClass("active");
+    }); 
+  </script>
+
+  <script>
+    function plotHistory(data) {
+
+      dataArray = [];
+      for (i = 0; i < data.time.length; i++) {
+        dataArray.push({
+          "time": new Date(data.time[i]),
+          "high": data.high[i],
+          "low": data.low[i],
+          "close": data.close[i],
+          "open": data.open[i],
+          "volume": data.volume[i]
+        });
+      }
+
+
+      // create figure
+      var margin = { top: 20, right: 40, bottom: 70, left: 40 },
+        width = 800 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+      d3.select("#history").select("svg").remove();
+      var svg = d3.select("#history").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+      var xDomain = [Math.min(...data.time), Math.max(...data.time)];
+      var yDomain = [Math.min(...data.low), Math.max(...data.high)];
+      var x = d3.scaleTime().domain(xDomain).range([0, width]);
+      var y = d3.scaleLinear().domain(yDomain).range([height, 0]);
+      var vol = d3.scaleLinear().domain([Math.min(...data.volume), Math.max(...data.volume)]).range([50, 0]);
+      var xAxis = d3.axisBottom().scale(x).ticks(14, "%I %p");
+      var yAxis = d3.axisRight().scale(y).ticks(10);
+      var volAxis = d3.axisLeft().scale(vol).ticks(3, "s");
+
+      // add axis
+      svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.75em")
+        .attr("dy", "-.1em")
+        .attr("transform", "rotate(-45)");
+
+      svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + (width + 5) + ", 0)")
+        .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 5)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Price");
+
+      svg.append("g")
+        .attr("class", "volume axis")
+        .call(volAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 5)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Volume");
+
+      // prepare data for candlestick chart
+      var candlestickData = dataArray.map(function (d) {
+        var candlestick = { "upper": {}, "lower": {}, "middle": {}, "raw": {} };
+        candlestick.raw = d;
+        candlestick.x = x(d.time);
+        candlestick.upper.y1 = y(d.high);
+        candlestick.lower.y1 = y(d.low);
+        candlestick.middle.height = Math.abs(y(d.open) - y(d.close));
+        candlestick.fill = (d.close < d.open);
+        if (d.close < d.open) {
+          candlestick.upper.y2 = y(d.open);
+          candlestick.lower.y2 = y(d.close);
+          candlestick.middle.y = y(d.open);
+          // candlestick.middle.height = y(d.open) - y(d.close);
+        } else {
+          candlestick.upper.y2 = y(d.close);
+          candlestick.lower.y2 = y(d.open);
+          candlestick.middle.y = y(d.close);
+          // candlestick.middle.height = y(d.close) - y(d.open);
+        }
+        return candlestick;
+      });
+      // var tooltip = d3.select("body").select(".tooltip");
+
+      // add candlestick
+      candleWidth = 4;
+      svg.append("g").selectAll("candlestick").data(candlestickData).enter().append("rect")
+        .attr("x", candlestick => candlestick.x)
+        .attr("width", candleWidth)
+        .attr("y", candlestick => candlestick.middle.y)
+        .attr("height", candlestick => candlestick.middle.height)
+        .attr("fill", candlestick => (candlestick.fill) ? "red" : "green")
+        .attr("fill-opacity", "0.4")
+        .attr("stroke", "black")
+        .style("stroke-width", 0.5);
+      svg.append("g").selectAll("candlestick-upper").data(candlestickData).enter().append("line")
+        .attr("x1", candlestick => candlestick.x + candleWidth / 2)
+        .attr("x2", candlestick => candlestick.x + candleWidth / 2)
+        .attr("y1", candlestick => candlestick.upper.y1)
+        .attr("y2", candlestick => candlestick.upper.y2)
+        .attr("stroke", "black");
+      svg.append("g").selectAll("candlestick-lower").data(candlestickData).enter().append("line")
+        .attr("x1", candlestick => candlestick.x + candleWidth / 2)
+        .attr("x2", candlestick => candlestick.x + candleWidth / 2)
+        .attr("y1", candlestick => candlestick.lower.y1)
+        .attr("y2", candlestick => candlestick.lower.y2)
+        .attr("stroke", "black");
+
+      // add volume bars
+      svg.append("g").attr("class", "volume").selectAll("bar").data(dataArray).enter().append("rect")
+        .attr("x", function (d) { return x(d.time); })
+        .attr("width", 1)
+        .attr("y", function (d) { return 50 - vol(d.volume) })
+        .attr("height", function (d) { return vol(d.volume) })
+        .attr("fill", "blue")
+        .attr("fill-opacity", "0.4");
+
+      svg.selectAll(".volume").attr("transform", "translate(0, " + (height - 50) + ")");
+
+      // create crosshairs
+      var crosshair = svg.append("g")
+        .attr("class", "line");
+
+      // create horizontal line
+      crosshair.append("line")
+        .attr("id", "crosshairX")
+        .attr("class", "crosshair")
+        .attr("stroke", "black")
+        .style("opacity", 0.4);
+
+      // create vertical line
+      crosshair.append("line")
+        .attr("id", "crosshairY")
+        .attr("class", "crosshair")
+        .attr("stroke", "black")
+        .style("opacity", 0.4);
+
+      svg.append("rect").attr("class", "overlay").attr("width", width).attr("height", height)
+        .attr("x", 0).attr("y", 0).style("opacity", 0)
+        .on("mouseover", function () {
+          //  tooltip.transition().duration(200).style("opacity", 0.9);
+          crosshair.style("display", null);
+        })
+        .on("mousemove", function () {
+          var mouse = d3.mouse(this);
+          // tooltip.text(Math.round(mouse[0]) + ", " + Math.round(mouse[1]))
+          //        .style("left", (d3.event.pageX + 5) + "px")
+          //        .style("top", (d3.event.pageY - 12) + "px");
+          crosshair.select("#crosshairX")
+            .attr("x1", mouse[0])
+            .attr("y1", y(yDomain[0]))
+            .attr("x2", mouse[0])
+            .attr("y2", y(yDomain[1]));
+
+          crosshair.select("#crosshairY")
+            .attr("x1", x(xDomain[0]))
+            .attr("y1", mouse[1])
+            .attr("x2", x(xDomain[1]))
+            .attr("y2", mouse[1]);
+        })
+        .on("mouseout", function () {
+          // tooltip.style("opacity", 0);
+          crosshair.style("display", "none");
+        });
+    }
+  </script>
+
+  <script>
+    function updatePredict(stock) {
+      var queryUrl = "http://localhost:5005/predict/" + stock
+      $.get(queryUrl).done(function (predictResult) {
+        d3.select(".prediction").selectAll("*").remove();
+        div = d3.select(".prediction").append("div");
+        div.append("h3").text(predictResult)
+      });
+    }
+  </script>
+
+  <script>
+    $(".stock-id").click(function () {
+      // switch view to step 2
+      $(".step02").click();
+
+      // update history view in step 2
+      var stock = this.id;
+      console.log("Stock " + stock + "is clicked.");
+
+      var year_data_url = "http://localhost:5005/yeardata_search/" + stock
+      //var year_data = $.get(year_data_url)
+      //console.log(year_data)
+      d3.json(year_data_url, plotHistory);
+
+      // update predict view in step 3
+      updatePredict(stock);
+    })
+  </script>
+
+
+</body>
+
+</html>
